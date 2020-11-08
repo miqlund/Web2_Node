@@ -1,2 +1,1 @@
-# Web2_Node
- Web2 kurssin koodit
+Tämä projekti on Savonian Web-ohjelmoinnin jatkokurssin tehtävien varten luotu repository.
