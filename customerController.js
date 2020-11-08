@@ -33,10 +33,8 @@ module.exports = {
       for (var key in req.query) {
         query += " AND " + key + " LIKE '" + req.query[key] + "%'";
       }
-      console.log("Ei tultu SELECT:in kautta");
     } else {
       query = "SELECT * FROM asiakas WHERE 1=1";
-      console.log("Tultiin SELECT:in kautta");
     }
     connection.query(query, function (error, results, fields) {
       if (error) {

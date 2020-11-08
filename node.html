@@ -21,9 +21,10 @@
                 <label for="address">Osoite: </label>
                 <input type="text" name="address" id="address">
                 <label for="custType">Asiaskastyyppi: </label>
-                <select name="custType" class="custType" id="custType">
+                <input type="number" class="custType" name="custType" id="custType">
+                <!-- <select name="custType" class="custType" id="custType">
                     <option value="empty" selected disabled>Valitse asiakastyyppi...</option>
-                </select>
+                </select> -->
             </div>
             <div>
                 <input type="button" value="Hae" id="getBtn" class="searchBtn">
@@ -113,6 +114,8 @@
 	
     var haeKaikki = () => {
         let sp = searcParameters();
+
+        $('#data').empty();
 		$.get(`http://localhost:3002/Asiakas?${sp}`,(data, status, xhr) => {
 			$.each(data, (index, json_obj) => {
                 $("#data").append("<tr>");
@@ -129,7 +132,7 @@
 		});
     }
     
-    // palauttaa hakuparametri-stringin jos kentät eivät ole tyhjiä
+    // Palautetaan hakuparametri
     searcParameters = () => {
         let str = '';
         if ($('#name').val().trim() != '') {
