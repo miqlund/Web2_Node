@@ -26,7 +26,7 @@
                 </select>
             </div>
             <div>
-                <input type="button" value="Hae" id="searchBtn" class="searchBtn">
+                <input type="button" value="Hae" id="getBtn" class="searchBtn">
                 <input type="button" value="Lisää asiakas" id="addCustBtn" class="searchBtn">
             </div>
 
@@ -38,7 +38,7 @@
     </div>
     
     <div class="dataTable" id="dataTable">
-        <table class="data" id="data">
+        <table class="data">
             <thead>
                 <tr>
                     <th>Nimi</th>
@@ -50,7 +50,7 @@
                     <th style="min-width: 100px; max-width: 125px;"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="data">
     
             </tbody>
         </table>
@@ -88,15 +88,15 @@
    
 	$(function(){
 
-		$.get("http://localhost:3002/Types", (data, status, xhr) => {
-			$.each(data, (index, json_obj) => {
-				$("#asiakastyyppi").append("<option value=" + json_obj.AVAIN + ">" + json_obj.SELITE + "</option>");
-					console.log(data);
-				});
-			});
+		// $.get("http://localhost:3002/Asiakas", (data, status, xhr) => {
+		// 	$.each(data, (index, json_obj) => {
+		// 		$("#asiakastyyppi").append("<option value=" + json_obj.AVAIN + ">" + json_obj.SELITE + "</option>");
+		// 			console.log(data);
+		// 		});
+		// 	});
 			
-		$("#Hae").click(function(){
-			naytaHakutulokset();
+		$("#getBtn").click(function(){
+			haeKaikki();
 
 		});
 
@@ -110,7 +110,47 @@
 		});
 	}
 	
-
+    var haeKaikki = () => {
+		$.get("http://localhost:3002/Asiakas",(data, status, xhr) => {
+			$.each(data, (index, json_obj) => {
+                $("#data").append("<tr>");
+                $("#data").append("<td>" + json_obj.AVAIN + "</td>");
+                $("#data").append("<td>" + json_obj.NIMI + "</td>");
+                $("#data").append("<td>" + json_obj.OSOITE + "</td>");
+                $("#data").append("<td>" + json_obj.POSTINRO + "</td>");
+                $("#data").append("<td>" + json_obj.POSTITMP + "</td>");
+                $("#data").append("<td>" + json_obj.LUONTIPVM + "</td>");
+                $("#data").append("<td>" + json_obj.ASTY_AVAIN + "</td>");
+                $("#data").append("</tr>");
+                
+			});
+		});
+    }
+    
+    
+    
+    searcParameters = () => {
+        let str = '';
+        if ($('#name').val().trim() != '') {
+            let name = $('#name').val().trim();
+            str += `nimi=${name}`;
+        }
+        if ($('#address').val().trim() != '') {
+            let address = $('#address').val().trim();
+            if (str !== '') {
+                str += '&';
+            }
+            str += `osoite=${address}`;
+        }
+        if ($('#custType').val() !== null) {
+            let custType = $('#custType').val();
+            if (str !== '') {
+                str += '&';
+            }
+            str+=`asty_avain=${custType}`;
+        }
+        return str;
+    }
 
 	var naytaHakutulokset = () =>{
 		var nimi=$("#nimi").val();

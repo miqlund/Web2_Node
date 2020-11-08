@@ -1,5 +1,6 @@
 var express = require("express"); // Paketti pyyntojen reitittämiseen
 var app = express();
+var fs = require("fs");
 
 // Otetaan käyttöön body-parser, jotta voidaan html-requestista käsitellä viestin body post requestia varten... *
 var bodyParser = require("body-parser");
@@ -15,7 +16,9 @@ const port = process.env.PORT || 3002;
 //CORS middleware
 var allowCrossDomain = function (req, res, next) {
   // Jos haluttaisiin rajata hakuja joidenkin ehtojen perusteella, niin määritettäisiin näin:
-
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
 };
 // Otetaan käyttöön CORS säännöt:
@@ -44,9 +47,15 @@ app
 //
 
 app.get("/", function (request, response) {
-  response.statusCode = 200;
-  response.setHeader("Content-Type", "text/plain");
-  response.end("Terve maailma");
+  //response.statusCode = 200;
+  //response.setHeader("Content-Type", "text/plain");
+  fs.readFile("node.html", function(err, data){
+    response.writeHead(200, {'Content-Type' : 'text/html'});
+    response.write(data);
+    response.end();    
+});
+
+  //response.sendFile(path.join(__dirname + "node.html"));
 });
 
 app.listen(port, hostname, () => {
