@@ -108,10 +108,12 @@
 				$("#asty_avain").append("<option value=" + json_obj.AVAIN + ">" + json_obj.SELITE + "</option>");
 			});
 		});
-	}
+    }
+    
 	
     var haeKaikki = () => {
-		$.get("http://localhost:3002/Asiakas",(data, status, xhr) => {
+        let sp = searcParameters();
+		$.get(`http://localhost:3002/Asiakas?${sp}`,(data, status, xhr) => {
 			$.each(data, (index, json_obj) => {
                 $("#data").append("<tr>");
                 $("#data").append("<td>" + json_obj.AVAIN + "</td>");
@@ -127,8 +129,7 @@
 		});
     }
     
-    
-    
+    // palauttaa hakuparametri-stringin jos kentät eivät ole tyhjiä
     searcParameters = () => {
         let str = '';
         if ($('#name').val().trim() != '') {

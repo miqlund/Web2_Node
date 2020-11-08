@@ -31,7 +31,7 @@ module.exports = {
 
     if (req.query.length != 0) {
       for (var key in req.query) {
-        query += " AND " + key + " LIKE" + req.query[key] + "%'";
+        query += " AND " + key + " LIKE '" + req.query[key] + "%'";
       }
       console.log("Ei tultu SELECT:in kautta");
     } else {
