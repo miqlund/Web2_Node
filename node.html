@@ -32,6 +32,7 @@
             </div>
 
         </fieldset>
+
     </div>
 
     <div class="addStatusDiv">
@@ -42,13 +43,14 @@
         <table class="data">
             <thead>
                 <tr>
+                    <th>Avain</th>
                     <th>Nimi</th>
                     <th>Osoite</th>
                     <th>Postinumero</th>
                     <th>Postitoimipaikka</th>
                     <th>Luontipäivämäärä</th>
                     <th>Asiakastyyppi</th>
-                    <th style="min-width: 100px; max-width: 125px;"></th>
+                    <!-- <th style="min-width: 100px; max-width: 125px;"></th> -->
                 </tr>
             </thead>
             <tbody id="data">
@@ -101,8 +103,24 @@
 
 		});
 
-	});
-	
+    });
+    
+    // Tehtävä 7
+    // Poistetaan asiakas JQueryn Ajax-kutsua käyttäen
+    var poista = (id) => {
+			$.ajax({
+				url: "http://localhost:3002/Asiakas/" + id,
+				type: 'DELETE',
+				success: () => {
+					naytaHakutulokset();
+				}
+			}          
+			).fail((err) => {
+				console.log("Error " + err);
+			})
+		}
+
+	// Haetaan asiakasta
 	var haeAsiakas = () => {
 		$.get("http://localhost:3002/Types",(data, status, xhr) => {
 			$.each(data, (index, json_obj) => {
@@ -111,7 +129,7 @@
 		});
     }
     
-	
+	// Haetaan kaikki asiakkaat
     var haeKaikki = () => {
         let sp = searcParameters();
 
@@ -156,6 +174,7 @@
         return str;
     }
 
+    // Näytetään haun tulokset
 	var naytaHakutulokset = () =>{
 		var nimi=$("#nimi").val();
 		 var osoite=$("#osoite").val();
