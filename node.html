@@ -8,7 +8,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="./scripts/script.js"></script>
     <link rel="stylesheet" href="./styles/style.css">
 </head>
 <body>
@@ -59,9 +58,9 @@
         </table>
     </div>
 
-    <div class="addCustDialog" id="addCustDialog" title="Asiakkaan lisääminen">
-        <div class="addCustDiv" id="addCustDiv">
-            <form>
+    <div class="addCustomerDialog" id="addCustomerDialog" title="Asiakkaan lisääminen">
+        <div class="addCustomerDiv" id="addCustomerDiv">
+            <form method="POST">
                 <fieldset style="margin-bottom: 1rem;">
                     <legend>Asiakkaan tiedot</legend>
                     <div class="gridContainer">
@@ -83,128 +82,7 @@
                 <input type="submit" value="Lisää" id="addCustSubmit">
             </form>
         </div>
-    </div>
-    
+    </div> 
 </body>
-			  
-<script>
-   
-	$(function(){
-
-		// $.get("http://localhost:3002/Asiakas", (data, status, xhr) => {
-		// 	$.each(data, (index, json_obj) => {
-		// 		$("#asiakastyyppi").append("<option value=" + json_obj.AVAIN + ">" + json_obj.SELITE + "</option>");
-		// 			console.log(data);
-		// 		});
-		// 	});
-			
-		$("#getBtn").click(function(){
-			haeKaikki();
-
-		});
-
-    });
-    
-    // Tehtävä 7
-    // Poistetaan asiakas JQueryn Ajax-kutsua käyttäen
-    var poista = (id) => {
-			$.ajax({
-				url: "http://localhost:3002/Asiakas/" + id,
-				type: 'DELETE',
-				success: () => {
-					naytaHakutulokset();
-				}
-			}          
-			).fail((err) => {
-				console.log("Error " + err);
-			})
-		}
-
-	// Haetaan asiakasta
-	var haeAsiakas = () => {
-		$.get("http://localhost:3002/Types",(data, status, xhr) => {
-			$.each(data, (index, json_obj) => {
-				$("#asty_avain").append("<option value=" + json_obj.AVAIN + ">" + json_obj.SELITE + "</option>");
-			});
-		});
-    }
-    
-	// Haetaan kaikki asiakkaat
-    var haeKaikki = () => {
-        let sp = searcParameters();
-
-        $('#data').empty();
-		$.get(`http://localhost:3002/Asiakas?${sp}`,(data, status, xhr) => {
-			$.each(data, (index, json_obj) => {
-                $("#data").append("<tr>");
-                $("#data").append("<td>" + json_obj.AVAIN + "</td>");
-                $("#data").append("<td>" + json_obj.NIMI + "</td>");
-                $("#data").append("<td>" + json_obj.OSOITE + "</td>");
-                $("#data").append("<td>" + json_obj.POSTINRO + "</td>");
-                $("#data").append("<td>" + json_obj.POSTITMP + "</td>");
-                $("#data").append("<td>" + json_obj.LUONTIPVM + "</td>");
-                $("#data").append("<td>" + json_obj.ASTY_AVAIN + "</td>");
-                $("#data").append("</tr>");
-                
-			});
-		});
-    }
-    
-    // Palautetaan hakuparametri
-    searcParameters = () => {
-        let str = '';
-        if ($('#name').val().trim() != '') {
-            let name = $('#name').val().trim();
-            str += `nimi=${name}`;
-        }
-        if ($('#address').val().trim() != '') {
-            let address = $('#address').val().trim();
-            if (str !== '') {
-                str += '&';
-            }
-            str += `osoite=${address}`;
-        }
-        if ($('#custType').val() !== null) {
-            let custType = $('#custType').val();
-            if (str !== '') {
-                str += '&';
-            }
-            str+=`asty_avain=${custType}`;
-        }
-        return str;
-    }
-
-    // Näytetään haun tulokset
-	var naytaHakutulokset = () =>{
-		var nimi=$("#nimi").val();
-		 var osoite=$("#osoite").val();
-		 var tyyppi = $("#asiakastyyppi").val();
-
-		  var tableHeaderRowCount = 1;
-		  var table = document.getElementById('tulokset');
-		  var rowCount = table.rows.length;
-			  for (var i = tableHeaderRowCount; i < rowCount; i++) {
-				  table.deleteRow(tableHeaderRowCount); 
-			  }
-			  
-		$.get("http://localhost:3002/asiakas?nimi=" + nimi + "&osoite=" + osoite + "&asty_avain=" + tyyppi,	function(data, status, xhr){
-				var json_array = data;
-				//console.log("status=" + status);
-					for(var i=0; i < json_array.length; i++){
-					  console.log("nimi=" + json_array[i].nimi);
-					  console.log("osoite=" + json_array[i].osoite);
-					};
-
-				$.each(data, function(index, json_obj)
-				{
-					//console.log(data);
-					$("#tulokset").append("<tr><td>" + json_obj.nimi +"</td><td>"+json_obj.osoite + "</td><td><button onclick='poista(" + json_obj.avain+ ")'>Poista " + json_obj.avain + "</button></td></tr>");
-				});
-		}).done(function(){
-		}).fail(function(err){
-		  alert("fail");
-		}).always(function(){
-		})
-	}
-</script>
+<script src="./script.js"></script>
 </html>

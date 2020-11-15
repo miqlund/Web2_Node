@@ -1,6 +1,7 @@
 "use strict";
 
 var mysql = require("mysql");
+var bodyParser = require("body-parser");
 
 // Luodaan yhteys tietokantaan
 var connection = mysql.createConnection({
@@ -54,23 +55,20 @@ module.exports = {
   // Tehtävä 4 ja 9
   // Lisätään asiakas tietokantaan ja tarkistetaan virheet
   create: function(req, res){
-		
-    console.log("Create = " + JSON.stringify(req.body));
+    console.dir(req.body)
 
   if ( req.body.nimi == "" || req.body.osoite == "" )
   {
-        res.send({"status": "NOT OK", "error": "Kenttä on tyhjä"}); 
+        res.send({"status": "500", "error": "Kenttä on tyhjä"}); 
   }
   else 
   {
-    var sql = "INSERT INTO asiakas(NIMI, OSOITE, POSTINRO, POSTITMP, LUONTIPVM, ASTY_AVAIN) VALUES ('" + req.body.nimi + "', '" + req.body.osoite + "', '" + req.body.postinro + "', '" + req.body.postitmp + "', '" + "11.11.2020', '" + req.body.asty_avain + "')";
-    
-    console.log("sql=" + sql);
+    var sql = "INSERT INTO asiakas(NIMI, OSOITE, POSTINRO, POSTITMP, LUONTIPVM, ASTY_AVAIN) VALUES ('" + req.body.nimi + "', '" + req.body.osoite + "', '" + req.body.postinro + "', '" + req.body.postitmp + "', '" + "11.11.2020', '" + "2')";
     
     connection.query(sql, function(error, results, fields){
       if ( error ){
         console.log("Virhe: " + error);
-        res.send({"status": "Kenttä on tyhjä", "error": error, "response": null}); 
+        res.send({"status": "500", "error": error, "response": null}); 
       }
       else
       {					
