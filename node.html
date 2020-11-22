@@ -49,6 +49,8 @@
                     <th>Postitoimipaikka</th>
                     <th>Luontipäivämäärä</th>
                     <th>Asiakastyyppi</th>
+                    <th>Poista</th>
+                    <th>Muokkaa</th>
                     <!-- <th style="min-width: 100px; max-width: 125px;"></th> -->
                 </tr>
             </thead>
@@ -82,7 +84,34 @@
                 <input type="submit" value="Lisää" id="addCustSubmit">
             </form>
         </div>
-    </div> 
+    </div>
+    
+    <div class="editCustomerDialog" id="editCustomerDialog" title="Asiakkaan muokkaaminen">
+        <div class="editCustomerDiv" id="editCustomerDiv">
+            <form method="PUT">
+                <fieldset style="margin-bottom: 1rem;">
+                    <legend>Asiakkaan tiedot</legend>
+                    <div class="gridContainer">
+                        <label for="custName">Nimi</label>
+                        <input type="text" name="nimi" id="custName">
+                        <label for="custAddress">Osoite</label>
+                        <input type="text" name="osoite" id="custAddress">
+                        <label for="custPostNbr">Postinumero</label>
+                        <input type="text" name="postinro" id="custPostNbr">
+                        <label for="custPostOff">Postitoimipaikka</label>
+                        <input type="text" name="postitmp" id="custPostOff">
+                        <label for="custType">Asiaskastyyppi: </label>
+                        <select name="asty_avain" class="custType" id="custCustType">
+                            <option value="empty" selected disabled>Valitse asiakastyyppi...</option>
+                        </select>
+                    </div>
+                </fieldset>
+                <p id="warning" class="warning">Kaikki kentät ovat pakollisia!</p>
+                <input type="submit" value="Muokkaa" id="editCustSubmit">
+            </form>
+        </div>
+    </div>
+
 </body>
 <script src="./script.js"></script>
 </html>

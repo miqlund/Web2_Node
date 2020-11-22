@@ -55,6 +55,7 @@ module.exports = {
   // Tehtävä 4 ja 9
   // Lisätään asiakas tietokantaan ja tarkistetaan virheet
   create: function(req, res){
+    console.log("Lisättiin käyttäjä:")
     console.dir(req.body)
 
   if ( req.body.nimi == "" || req.body.osoite == "" )
@@ -63,9 +64,9 @@ module.exports = {
   }
   else 
   {
-    var sql = "INSERT INTO asiakas(NIMI, OSOITE, POSTINRO, POSTITMP, LUONTIPVM, ASTY_AVAIN) VALUES ('" + req.body.nimi + "', '" + req.body.osoite + "', '" + req.body.postinro + "', '" + req.body.postitmp + "', '" + "11.11.2020', '" + "2')";
+    var sqlInsert = "INSERT INTO asiakas(NIMI, OSOITE, POSTINRO, POSTITMP, LUONTIPVM, ASTY_AVAIN) VALUES ('" + req.body.nimi + "', '" + req.body.osoite + "', '" + req.body.postinro + "', '" + req.body.postitmp + "', '" + "11.11.2020', '" + "2')";
     
-    connection.query(sql, function(error, results, fields){
+    connection.query(sqlInsert, function(error, results, fields){
       if ( error ){
         console.log("Virhe: " + error);
         res.send({"status": "500", "error": error, "response": null}); 
@@ -79,16 +80,48 @@ module.exports = {
   },
 
 
-  update: function (req, res) {},
+  update: function (req, res) {
+    console.log("Muokattiin käyttäjää:")
+    console.dir(req.body)
+
+  if ( req.body.nimi == "") {
+        res.send({"status": "500", "error": "Nimi on tyhjä"}); 
+  }
+  if ( req.body.osoite == "") {
+    res.send({"status": "500", "error": "Osoite on tyhjä"}); 
+  }
+  if ( req.body.postinro == "") {
+    res.send({"status": "500", "error": "Postinumero on tyhjä"}); 
+  }
+  if ( req.body.postitmp == "") {
+    res.send({"status": "500", "error": "Postitoimipaikka on tyhjä"}); 
+  }
+  else {
+    var sqlEdit ="UPDATE asiakas SET NIMI=?, OSOITE=?, POSTINRO=?, POSTITMP=? WHERE AVAIN='" + req.params.id + "'" ;
+
+    var editedData = [req.body.nimi, req.body.osoite, req.body.postinro, req.body.postitmp];
+
+    connection.query(sqlEdit, editedData, function(error, results, fields){
+      if ( error ){
+        console.log("Virhe: " + error);
+        res.send({"status": "500", "error": error, "response": null}); 
+      }
+      else
+      {					
+        res.send({"status": "OK", "error": ""}); 
+      }
+      });
+    }
+  },
 
   // Tehtävä 6
   // Poistetaan asiakas tietokannasta
   delete: function (req, res) {
     console.log("Poistettiin id: " + JSON.stringify(req.params));
     
-  var sql = "DELETE FROM `asiakas` WHERE `AVAIN`='" + req.params.id + "'" ;
+  var sqlDelete = "DELETE FROM asiakas WHERE AVAIN='" + req.params.id + "'" ;
 
-  connection.query(sql, function(error, results, fields){
+  connection.query(sqlDelete, function(error, results, fields){
     if ( error ){
       console.log("Asiakkaan poistossa virhe: " + error);
       res.send({"status": 234, "error": error, "response": null}); 

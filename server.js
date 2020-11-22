@@ -47,8 +47,6 @@ app
 //
 
 app.get("/", function (request, response) {
-  //response.statusCode = 200;
-  //response.setHeader("Content-Type", "text/plain");
   fs.readFile("node.html", function(err, data){
     response.writeHead(200, {'Content-Type' : 'text/html'});
     response.write(data);

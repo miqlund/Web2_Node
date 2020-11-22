@@ -1,12 +1,5 @@
 $(function(){
 
-    // $.get("http://localhost:3002/Asiakas", (data, status, xhr) => {
-    // 	$.each(data, (index, json_obj) => {
-    // 		$("#asiakastyyppi").append("<option value=" + json_obj.AVAIN + ">" + json_obj.SELITE + "</option>");
-    // 			console.log(data);
-    // 		});
-    // 	});
-        
     $("#addCustSubmit").click(function(){
         lisaaAsiakas();
     });
@@ -19,6 +12,25 @@ $(function(){
         poista(id);
     });
 
+    $("#editCustSubmit").click(function(){
+        muokkaaAsiakas();
+    });
+
+    // avataan asiakkaanlisäysdialogi
+    $('#addCustBtn').click(() => {
+    const isOpen = $('#addCustomerDialog').dialog("isOpen");
+    if (!isOpen) {
+        $('#addCustomerDialog').dialog("open");
+    }
+    });
+
+    // avataan asiakkaanmuokkausysdialogi
+    $('#editCustBtn').click(() => {
+        const isOpen = $('#editCustomerDialog').dialog("isOpen");
+        if (!isOpen) {
+            $('#editCustomerDialog').dialog("open");
+        }
+        });
 });
 
 
@@ -62,25 +74,16 @@ var haeKaikki = () => {
             $("#data").append("<td>" + json_obj.LUONTIPVM + "</td>");
             $("#data").append("<td>" + json_obj.ASTY_AVAIN + "</td>");
             $("#data").append("<td><button onClick=poista(" + json_obj.AVAIN + ")>Delete</td>");
+            $("#data").append("<td><button id=editCustBtn onClick=edit(" + json_obj.AVAIN + ")>Edit</td>");
             $("#data").append("</tr>");
             
         });
     });
 }
 
-addCust = (param) => {
-    $.post("https://codez.savonia.fi/jussi/api/asiakas/lisaa.php", param)
-        .then((data) => {
-            showAddCustStat(data);
-            $('#addCustDialog').dialog("close");
-            fetch();
-        });
-}
-
-
 // Funktio asiakkaan lisäämiselle
 var lisaaAsiakas = (param) => {
-    $.post("http://localhost:3002/Asiakas", param)
+    $.post("http://localhost:3002/Asiakas/", param)
         .then((data) => {
             showAddCustStat(data);
             $('#addCustomerDialog').dialog("close");
@@ -89,6 +92,49 @@ var lisaaAsiakas = (param) => {
         });
 }
 
+// Funktio asiakkaan muokkaamiselle
+var muokkaaAsiakas = (param) => {
+    $.put("http://localhost:3002/Asiakas/"+ id, param)
+        .then((data) => {
+            showAddCustStat(data);
+            $('#editCustomerDialog').dialog("close");
+            $('#data').empty();
+            haeKaikki();
+        });
+}
+
+// Näytetään haun tulokset
+var naytaHakutulokset = () =>{
+    var nimi=$("#nimi").val();
+     var osoite=$("#osoite").val();
+     var tyyppi = $("#asiakastyyppi").val();
+
+      var tableHeaderRowCount = 1;
+      var table = document.getElementById('tulokset');
+      var rowCount = table.rows.length;
+          for (var i = tableHeaderRowCount; i < rowCount; i++) {
+              table.deleteRow(tableHeaderRowCount); 
+          }
+          
+    $.get("http://localhost:3002/asiakas?nimi=" + nimi + "&osoite=" + osoite + "&asty_avain=" + tyyppi,	function(data, status, xhr){
+            var json_array = data;
+            //console.log("status=" + status);
+                for(var i=0; i < json_array.length; i++){
+                  console.log("nimi=" + json_array[i].nimi);
+                  console.log("osoite=" + json_array[i].osoite);
+                };
+
+            $.each(data, function(index, json_obj)
+            {
+                //console.log(data);
+                $("#tulokset").append("<tr><td>" + json_obj.nimi +"</td><td>"+json_obj.osoite + "</td><td><button onclick='poista(" + json_obj.avain+ ")'>Poista " + json_obj.avain + "</button></td></tr>");
+            });
+    }).done(function(){
+    }).fail(function(err){
+      alert("fail");
+    }).always(function(){
+    })
+}
 
 // luodaan asiakkaanlisäysdialogi
 let dialog = $('#addCustomerDialog').dialog({
@@ -103,23 +149,37 @@ let dialog = $('#addCustomerDialog').dialog({
         }
     });
 
-    // luodaan formi TESTI
-    let form = dialog.find("form")
+// luodaan asiakkaanmuokkausdialogi
+let editDialog = $('#editCustomerDialog').dialog({
+    autoOpen: false,
+    modal: true,
+    resizable: false,
+    minWidth: 400,
+    width: 'auto',
+    close: function() {
+        form[0].reset();
+        allFields.removeClass("ui-state-error");
+    }
+});
+
+// luodaan formi asiakkaan lisäykselle
+let form = dialog.find("form")
         .on("submit", (event) => {
             event.preventDefault();
                 let param = dialog.find("form").serialize();
                 lisaaAsiakas(param);
             }
-    );
+);
 
 
-// avataan asiakkaanlisäysdialogi jos sitä ei ole jo avattu
-$('#addCustBtn').click(() => {
-    const isOpen = $('#addCustomerDialog').dialog("isOpen");
-    if (!isOpen) {
-        $('#addCustomerDialog').dialog("open");
+// luodaan formi asiakkaan muokkaukselle
+let editForm = editDialog.find("form")
+.on("submit", (event) => {
+    event.preventDefault();
+        let param = editDialog.find("form").serialize();
+        muokkaaAsiakas(param);
     }
-});
+);
 
 // Asiakkaan lisäyksen tarkistus
 showAddCustStat = (data) => {
@@ -155,37 +215,4 @@ searcParameters = () => {
         str+=`asty_avain=${custType}`;
     }
     return str;
-}
-
-// Näytetään haun tulokset
-var naytaHakutulokset = () =>{
-    var nimi=$("#nimi").val();
-     var osoite=$("#osoite").val();
-     var tyyppi = $("#asiakastyyppi").val();
-
-      var tableHeaderRowCount = 1;
-      var table = document.getElementById('tulokset');
-      var rowCount = table.rows.length;
-          for (var i = tableHeaderRowCount; i < rowCount; i++) {
-              table.deleteRow(tableHeaderRowCount); 
-          }
-          
-    $.get("http://localhost:3002/asiakas?nimi=" + nimi + "&osoite=" + osoite + "&asty_avain=" + tyyppi,	function(data, status, xhr){
-            var json_array = data;
-            //console.log("status=" + status);
-                for(var i=0; i < json_array.length; i++){
-                  console.log("nimi=" + json_array[i].nimi);
-                  console.log("osoite=" + json_array[i].osoite);
-                };
-
-            $.each(data, function(index, json_obj)
-            {
-                //console.log(data);
-                $("#tulokset").append("<tr><td>" + json_obj.nimi +"</td><td>"+json_obj.osoite + "</td><td><button onclick='poista(" + json_obj.avain+ ")'>Poista " + json_obj.avain + "</button></td></tr>");
-            });
-    }).done(function(){
-    }).fail(function(err){
-      alert("fail");
-    }).always(function(){
-    })
 }
