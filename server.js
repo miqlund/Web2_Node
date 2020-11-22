@@ -24,7 +24,7 @@ var allowCrossDomain = function (req, res, next) {
 // Otetaan käyttöön CORS säännöt:
 app.use(allowCrossDomain);
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); //* ...jsonina
 
 // Staattiset tiedostot, esim. kuvat, tyylitiedostot, scriptit käyttöliittymää varten
@@ -43,8 +43,9 @@ app
 app
   .route("/Asiakas/:id")
   .put(customerController.update)
+  .get(customerController.fetchCustomer)
   .delete(customerController.delete);
-//
+
 
 app.get("/", function (request, response) {
   fs.readFile("node.html", function(err, data){
@@ -53,15 +54,9 @@ app.get("/", function (request, response) {
     response.end();    
 });
 
-  //response.sendFile(path.join(__dirname + "node.html"));
+
 });
 
 app.listen(port, hostname, () => {
   console.log(`Server running AT http://${hostname}:${port}/`);
 });
-
-/*
-app.listen(port, () => {
-    console.log(`Server running AT http://${port}/`);
-  });
-*/

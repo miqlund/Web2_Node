@@ -1,19 +1,6 @@
-$(function(){
-
-    $("#addCustSubmit").click(function(){
-        lisaaAsiakas();
-    });
-    
+$(function(){    
     $("#getBtn").click(function(){
         haeKaikki();
-    });
-    
-    $("#deleteCustomer").click(function(){
-        poista(id);
-    });
-
-    $("#editCustSubmit").click(function(){
-        muokkaaAsiakas();
     });
 
     // avataan asiakkaanlisäysdialogi
@@ -26,6 +13,7 @@ $(function(){
 
     // avataan asiakkaanmuokkausysdialogi
     $('#editCustBtn').click(() => {
+        console.log("Button testi");
         const isOpen = $('#editCustomerDialog').dialog("isOpen");
         if (!isOpen) {
             $('#editCustomerDialog').dialog("open");
@@ -74,7 +62,7 @@ var haeKaikki = () => {
             $("#data").append("<td>" + json_obj.LUONTIPVM + "</td>");
             $("#data").append("<td>" + json_obj.ASTY_AVAIN + "</td>");
             $("#data").append("<td><button onClick=poista(" + json_obj.AVAIN + ")>Delete</td>");
-            $("#data").append("<td><button id=editCustBtn onClick=edit(" + json_obj.AVAIN + ")>Edit</td>");
+            $("#data").append("<td><button id='editCustBtn' onClick=avaaMuokkaus(" + json_obj.AVAIN + ")>Edit</td>");
             $("#data").append("</tr>");
             
         });
@@ -87,19 +75,41 @@ var lisaaAsiakas = (param) => {
         .then((data) => {
             showAddCustStat(data);
             $('#addCustomerDialog').dialog("close");
-            $('#data').empty();
             haeKaikki();
         });
 }
 
 // Funktio asiakkaan muokkaamiselle
-var muokkaaAsiakas = (param) => {
-    $.put("http://localhost:3002/Asiakas/"+ id, param)
-        .then((data) => {
-            showAddCustStat(data);
+var muokkaaAsiakas = (id) => {
+    $.ajax({
+        url: "http://localhost:3002/Asiakas/" + id,
+        type: 'PUT',
+        success: () => {
             $('#editCustomerDialog').dialog("close");
-            $('#data').empty();
             haeKaikki();
+        }
+    }          
+    ).fail((err) => {
+        console.log("Error " + err);
+    })
+}
+
+var avaaMuokkaus = (id) => {
+        const isOpen = $('#editCustomerDialog').dialog("isOpen");
+        if (!isOpen) {
+            $('#editCustomerDialog').dialog("open");
+        }
+        $.get("http://localhost:3002/Asiakas/" + id,(data, status, xhr) => {
+        $('#editCustomerDiv #custNameEdit').val(data[0].NIMI);
+        $('#editCustomerDiv #custAddress').val(data[0].OSOITE);
+        $('#editCustomerDiv #custPostNbr').val(data[0].POSTINRO);
+        $('#editCustomerDiv #custPostOff').val(data[0].POSTITMP);
+        });
+        $("#editCustSubmit").click(function(){
+            //console.log(id)
+            //muokkaaAsiakas(id);
+            let param = editDialog.find("form").serialize();
+            muokkaaAsiakas(id);
         });
 }
 
@@ -126,7 +136,6 @@ var naytaHakutulokset = () =>{
 
             $.each(data, function(index, json_obj)
             {
-                //console.log(data);
                 $("#tulokset").append("<tr><td>" + json_obj.nimi +"</td><td>"+json_obj.osoite + "</td><td><button onclick='poista(" + json_obj.avain+ ")'>Poista " + json_obj.avain + "</button></td></tr>");
             });
     }).done(function(){
@@ -145,7 +154,6 @@ let dialog = $('#addCustomerDialog').dialog({
         width: 'auto',
         close: function() {
             form[0].reset();
-            allFields.removeClass("ui-state-error");
         }
     });
 
@@ -158,7 +166,6 @@ let editDialog = $('#editCustomerDialog').dialog({
     width: 'auto',
     close: function() {
         form[0].reset();
-        allFields.removeClass("ui-state-error");
     }
 });
 
@@ -172,14 +179,14 @@ let form = dialog.find("form")
 );
 
 
-// luodaan formi asiakkaan muokkaukselle
+/* // luodaan formi asiakkaan muokkaukselle
 let editForm = editDialog.find("form")
 .on("submit", (event) => {
     event.preventDefault();
         let param = editDialog.find("form").serialize();
         muokkaaAsiakas(param);
     }
-);
+); */
 
 // Asiakkaan lisäyksen tarkistus
 showAddCustStat = (data) => {

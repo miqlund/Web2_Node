@@ -1,7 +1,10 @@
 Tämä projekti on Savonian Web-ohjelmoinnin jatkokurssin tehtävien varten luotu repository. Koodien pohjat ovat tulleet Savonia lehtoreilta, joita allekirjoittanut on muokannut. Projekti on vain oppimistarkoitukseen, eikä mihinkaan muuhun.
 
-Tehtävä 4: asty_avain ja päivämäärä on hard-koodattu
-Tehtävä 9: Koodissa on virhe, joka ilmoittaa aina postinro olevan liian pitkä, siksi myös onnistuneesta lisäyksestä tulee error
+Tehtävä 10: Asiakkaan muokkaus onnistuu Postmanin avulla ja käyttöliittymän toiminta on muuten oikein, paitsi req.body ei tuo parametrejä, joten muokkaus kaatuu siihen.
+
+Tehtävä 4: asty_avain ja päivämäärä on hard-koodattu.
+
+Tehtävä 9: Koodissa on virhe, joka ilmoittaa aina postinro olevan liian pitkä, siksi myös onnistuneesta lisäyksestä tulee error.
 
 Tehtävät 2 ja 3
 

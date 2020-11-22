@@ -2,6 +2,7 @@
 
 var mysql = require("mysql");
 var bodyParser = require("body-parser");
+const e = require("express");
 
 // Luodaan yhteys tietokantaan
 var connection = mysql.createConnection({
@@ -51,6 +52,19 @@ module.exports = {
     });
   },
 
+fetchCustomer: function (req, res) {
+  var query = 'SELECT AVAIN, NIMI, OSOITE, POSTINRO, POSTITMP, LUONTIPVM, ASTY_AVAIN FROM asiakas WHERE AVAIN=' + req.params.id;
+     
+  connection.query(query, function (error, results, fields) {
+    if (error) {
+          console.log('Virhe syy: ' + error);
+          res.status(500).json({ 'status': 'not ok', 'status_text': error.sqlMessage });
+      } else {
+          res.status(200).json(results);
+      }
+    });
+},
+
 
   // Tehtävä 4 ja 9
   // Lisätään asiakas tietokantaan ja tarkistetaan virheet
@@ -81,27 +95,18 @@ module.exports = {
 
 
   update: function (req, res) {
+    if(req.params.id === 0) {
+      res.status(404).JSON({});
+    }
     console.log("Muokattiin käyttäjää:")
     console.dir(req.body)
+    console.log(req.params.id)
 
-  if ( req.body.nimi == "") {
-        res.send({"status": "500", "error": "Nimi on tyhjä"}); 
-  }
-  if ( req.body.osoite == "") {
-    res.send({"status": "500", "error": "Osoite on tyhjä"}); 
-  }
-  if ( req.body.postinro == "") {
-    res.send({"status": "500", "error": "Postinumero on tyhjä"}); 
-  }
-  if ( req.body.postitmp == "") {
-    res.send({"status": "500", "error": "Postitoimipaikka on tyhjä"}); 
-  }
-  else {
-    var sqlEdit ="UPDATE asiakas SET NIMI=?, OSOITE=?, POSTINRO=?, POSTITMP=? WHERE AVAIN='" + req.params.id + "'" ;
+    var sqlEdit ="UPDATE asiakas SET NIMI='" + req.body.nimi + "', OSOITE='" + req.body.osoite + "', POSTINRO='" + req.body.postinro + "', POSTITMP='" + req.body.postitmp + "' WHERE AVAIN='" + req.params.id + "'" ;
 
     var editedData = [req.body.nimi, req.body.osoite, req.body.postinro, req.body.postitmp];
 
-    connection.query(sqlEdit, editedData, function(error, results, fields){
+    connection.query(sqlEdit, function(error, results, fields){
       if ( error ){
         console.log("Virhe: " + error);
         res.send({"status": "500", "error": error, "response": null}); 
@@ -111,7 +116,6 @@ module.exports = {
         res.send({"status": "OK", "error": ""}); 
       }
       });
-    }
   },
 
   // Tehtävä 6
